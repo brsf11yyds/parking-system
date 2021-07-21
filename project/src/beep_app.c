@@ -28,8 +28,8 @@ int do_beep()
 	return 0;
 }
 
-int main()
-{
-	do_beep();
-	return 0;
-}
+// int main()
+// {
+// 	do_beep();
+// 	return 0;
+// }

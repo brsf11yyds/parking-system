@@ -167,3 +167,199 @@ int card(int select)
 	close(fd);
 	return 0;	
 }
+
+int read_card(int *id)
+{
+	int fd;
+	unsigned char sector = 1;
+	fd = open(DEV_PATH, O_RDWR | O_NOCTTY | O_NONBLOCK);
+	if (fd < 0)
+	{
+		fprintf(stderr, "Open Gec6818_ttySAC2 fail!\n");
+		return -1;
+	}
+	/*初始化串口*/
+	init_tty(fd);
+
+
+	while(1)
+	{
+		printf("Start..............\n");
+		/*请求天线范围的卡*/
+		if ( PiccRequest(fd) )
+		{
+			sleep(2);
+			printf("1 The request failed!\n");
+				continue;
+		}
+		usleep(30*1000);		//延时30ms
+		/*进行防碰撞，获取天线范围内最大的ID*/
+		if( PiccAnticoll(fd) )
+		{
+			printf("2 RFID PiccAnticoll failed\n");
+			continue;
+		}
+
+		usleep(30*1000);
+		//选择
+		if( PiccSelect(fd) )
+		{
+				printf("3 PiccSelect failed\n");
+				continue;
+		}
+
+		usleep(30*1000);
+		//密码验证 : 验证秘钥
+		if( PiccAuthKey( fd,  sector, KEYA))
+		{
+			printf("4 PiccAuthKey KEYA failed now try KEYB\n");
+				
+			/*请求天线范围的卡*/
+			if ( PiccRequest(fd) )
+			{
+				printf("5 The request failed!\n");
+				continue;
+			}
+			/*进行防碰撞，获取天线范围内最大的ID*/
+			if( PiccAnticoll(fd) )
+			{
+				printf("6 RFID PiccAnticoll failed\n");
+				continue;
+			}
+			/*设置*/
+			if( PiccSelect(fd) )
+			{
+					printf("7 PiccSelect failed\n");
+					continue;
+			}
+			/*密码验证*/
+			if( PiccAuthKey( fd,  sector, KEYB) )
+				printf("8PiccAuthKey failed\n");
+				continue;
+		}
+
+        usleep(300*1000);
+  
+		/*获取卡的数据块1的数据*/
+		if( PiccRead(fd , sector) )	
+		{
+			printf("==PiccRead failed\n");
+			continue;
+		}
+		
+		*id = (int)(((unsigned)DataReadBuf[3] << 24) + ((unsigned)DataReadBuf[2] << 16) + ((unsigned)DataReadBuf[1] << 8) + (unsigned)DataReadBuf[0]);
+
+		memset(DataReadBuf,0,16);
+        memset(cardid,0,4);
+		break;
+	}   
+	close(fd);
+	return 0;
+}
+
+int write_card(int id)
+{
+	int fd;
+	unsigned char sector = 1;
+	fd = open(DEV_PATH, O_RDWR | O_NOCTTY | O_NONBLOCK);
+	if (fd < 0)
+	{
+		fprintf(stderr, "Open Gec6818_ttySAC2 fail!\n");
+		return -1;
+	}
+	/*初始化串口*/
+	init_tty(fd);
+
+	DataWriteBuf[0]  = '3';
+	DataWriteBuf[1]  = '2';
+	DataWriteBuf[2]  = '1';
+	DataWriteBuf[3]  = '4';
+	DataWriteBuf[4]  = '5';
+	DataWriteBuf[5]  = '6';
+	DataWriteBuf[6]  = '7';
+	DataWriteBuf[7]  = '8';
+	DataWriteBuf[8]  = '9';
+	DataWriteBuf[9]  = '2';
+	DataWriteBuf[10] = '5';
+	DataWriteBuf[11] = '6';
+	DataWriteBuf[12] = '7';
+	DataWriteBuf[13] = '3';
+	DataWriteBuf[14] = '3';
+	DataWriteBuf[15] = '3';
+	while(1)
+	{
+		printf("Start..............\n");
+		/*请求天线范围的卡*/
+		if ( PiccRequest(fd) )
+		{
+			sleep(2);
+			printf("1 The request failed!\n");
+				continue;
+		}
+		usleep(30*1000);		//延时30ms
+		/*进行防碰撞，获取天线范围内最大的ID*/
+		if( PiccAnticoll(fd) )
+		{
+			printf("2 RFID PiccAnticoll failed\n");
+			continue;
+		}
+
+		usleep(30*1000);
+		//选择
+		if( PiccSelect(fd) )
+		{
+				printf("3 PiccSelect failed\n");
+				continue;
+		}
+
+		usleep(30*1000);
+		//密码验证 : 验证秘钥
+		if( PiccAuthKey( fd,  sector, KEYA))
+		{
+			printf("4 PiccAuthKey KEYA failed now try KEYB\n");
+				
+			/*请求天线范围的卡*/
+			if ( PiccRequest(fd) )
+			{
+				printf("5 The request failed!\n");
+				continue;
+			}
+			/*进行防碰撞，获取天线范围内最大的ID*/
+			if( PiccAnticoll(fd) )
+			{
+				printf("6 RFID PiccAnticoll failed\n");
+				continue;
+			}
+			/*设置*/
+			if( PiccSelect(fd) )
+			{
+					printf("7 PiccSelect failed\n");
+					continue;
+			}
+			/*密码验证*/
+			if( PiccAuthKey( fd,  sector, KEYB) )
+				printf("8PiccAuthKey failed\n");
+				continue;
+		}
+
+        usleep(300*1000);
+
+		DataWriteBuf[0]  = (unsigned char)(id);
+		DataWriteBuf[1]  = (unsigned char)(id >> 8);
+		DataWriteBuf[2]  = (unsigned char)(id >> 16);
+		DataWriteBuf[3]  = (unsigned char)(id >> 24);
+		printf("%2x%2x%2x%2x\n",DataWriteBuf[3],DataWriteBuf[2],DataWriteBuf[1],DataWriteBuf[0]);
+		
+		if( PiccWrite(fd , sector) )
+		{
+			printf("PiccWrite failed\n");
+			continue;
+		}
+		printf("Write success!\n");
+		break;
+        memset(cardid,0,4);
+        sleep(1);
+	}   
+	close(fd);
+	return 0;
+}

@@ -56,9 +56,9 @@ int show_bmp(char *path)
         printf("文件类型标识正确!" );  
         printf("\n文件标识符：%d\n", fileType); 
         fread(&fileHeader, 1, sizeof(BITMAPFILEHEADER), fp);
-        showBmpHead(fileHeader);
+        //showBmpHead(fileHeader);
         fread(&infoHeader, 1, sizeof(BITMAPINFOHEADER), fp);
-        showBmpInfoHead(infoHeader);
+        //showBmpInfoHead(infoHeader);
         fclose(fp);        
     }
 

@@ -41,7 +41,7 @@ int list_read(struct list_node * head )
    	fclose(fp);
 }
 
-int list_add_head(struct list_node * head ,int id,int money)
+int list_add_head(struct list_node * head ,int id,unsigned money,int cat)
 {
 	struct list_node * p = NULL;
 	p = (struct list_node*)malloc(sizeof(struct list_node));
@@ -54,6 +54,8 @@ int list_add_head(struct list_node * head ,int id,int money)
 	p->id = id;
 	p->next = head->next;
 	p->money = money;
+	p->cat = cat;
+	p->state = 0;
 	head->next = p;
 	
 	return 0;	
@@ -139,44 +141,179 @@ int  delete_list_node(struct list_node * head , int id)
 }
 
 //修改节点金额
-int  money_list_node(struct list_node * head ,int mode ,int id ,int money)
+int  money_list_node(struct list_node * head ,int id ,unsigned money)
 {
 	//创建两个替身
 	struct list_node *p = NULL;
 	struct list_node *q = NULL;
-	if(mode == 0)
-    {
-        for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+		if(p->id == id)
+		{
+            p->money = money;
+			printf("找到对应的节点，并且已经修改金额成功！\n");
+			return 0;
+		}
+
+	}
+	printf("没有找到对应的节点，修改金额失败！\n");
+	return -1;	
+}
+//修改节点id
+int  id_list_node(struct list_node * head ,int id ,int new_id)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
 	    {
-	    	if(p->id == id)
-	    	{
-                p->money = money;
-	    		printf("找到对应的节点，并且已经修改金额成功！\n");
-	    		return 0;
-	    	}
-    
+            p->id = new_id;
+	    	printf("找到对应的节点，并且已经修改id成功！\n");
+	    	return 0;
 	    }
-	    printf("没有找到对应的节点，修改金额失败！\n");
-	    return -1; 
-    }
-    else if(mode == 1)
-    {
-        for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+
+	}   
+	printf("没有找到对应的节点，修改id失败！\n");
+	return -1;	
+}
+//修改节点状态
+int  state_list_node(struct list_node * head ,int id ,int state)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
 	    {
-		    if(id == p->id)
-		    {
-                p->id = money;
-		    	printf("找到对应的节点，并且已经修改id成功！\n");
-		    	return 0;
-		    }
-    
-	    }   
-	    printf("没有找到对应的节点，修改id失败！\n");
-	    return -1;
-    }
-	
+            p->state = state;
+	    	printf("找到对应的节点，并且已经修改id成功！\n");
+	    	return 0;
+	    }
+
+	}   
+	printf("没有找到对应的节点，修改id失败！\n");
+	return -1;	
+}
+//修改节点卡种类
+int  cat_list_node(struct list_node * head ,int id ,int cat)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
+	    {
+            p->cat = cat;
+	    	printf("找到对应的节点，并且已经修改id成功！\n");
+	    	return 0;
+	    }
+
+	}   
+	printf("没有找到对应的节点，修改id失败！\n");
+	return -1;	
+}
+//修改节点时间
+int  time_list_node(struct list_node * head ,int id ,time_t time)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
+	    {
+            p->intial_time = time;
+	    	printf("找到对应的节点，并且已经修改time成功！\n");
+	    	return 0;
+	    }
+
+	}   
+	printf("没有找到对应的节点，修改time失败！\n");
+	return -1;	
+}
+//修改节点图片
+int  pic_list_node(struct list_node * head ,int id ,char *picture)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
+	    {
+            strcpy(p->picture,picture);
+	    	printf("找到对应的节点，并且已经修改time成功！\n");
+	    	return 0;
+	    }
+
+	}   
+	printf("没有找到对应的节点，修改time失败！\n");
+	return -1;	
 }
 
+//查询节点状态
+int  state_list_node_2(struct list_node * head ,int id ,int *state)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
+	    {
+            *state = p->state;
+	    	printf("找到对应的节点，并且已经修改id成功！\n");
+	    	return 0;
+	    }
+
+	}   
+	printf("没有找到对应的节点，修改id失败！\n");
+	return -1;	
+}
+
+//查询节点余额
+int  money_list_node_2(struct list_node * head ,int id ,int *money)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
+	    {
+            *money = p->money;
+	    	printf("找到对应的节点，并且已经修改id成功！\n");
+	    	return 0;
+	    }
+
+	}   
+	printf("没有找到对应的节点，修改id失败！\n");
+	return -1;	
+}
+
+//查询节点时间
+int  time_list_node_2(struct list_node * head ,int id ,time_t *time)
+{
+	//创建两个替身
+	struct list_node *p = NULL;
+	struct list_node *q = NULL;
+    for(q=head,p=head->next ; p != NULL ; q = p , p = p->next)
+	{
+	    if(id == p->id)
+	    {
+            time = p->intial_time ;
+	    	printf("找到对应的节点，并且已经修改time成功！\n");
+	    	return 0;
+	    }
+
+	}   
+	printf("没有找到对应的节点，修改time失败！\n");
+	return -1;	
+}
 
 int data()
 {
@@ -208,7 +345,7 @@ int data()
 			
 			printf("请输入充值的金额:\n");
 			scanf("%d",&money);
-			list_add_head(data0,id,money);
+			list_add_head(data0,id,money,1);
 			
 
 			list_write(data0);
@@ -234,13 +371,13 @@ int data()
                     {
                         printf("请输入修改金额:\n");
                         scanf("%d",&money);
-                        money_list_node(data0,0,id,money);
+                        money_list_node(data0,id,money);
                     }
                     else if(menu2 == 2)
                     {
                         printf("请输入修改id:\n");
                         scanf("%d",&money);
-                        money_list_node(data0,1,id,money);
+                        id_list_node(data0,id,money);
                     }
 				}
 			}

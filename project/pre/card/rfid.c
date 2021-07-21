@@ -1,4 +1,4 @@
-#include "read.h"
+#include "rfid.h"
 unsigned char RBuf[128];
 unsigned char KEYA_BUF[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 unsigned char KEYB_BUF[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
@@ -404,7 +404,7 @@ int PiccWrite(int fd,unsigned char sector)
 	WBuf[21] = CalBCC(WBuf, WBuf[0]-2);		//校验和
 	WBuf[22] = 0x03; 	//结束标志
 
-        timeout.tv_sec = 3;
+        timeout.tv_sec = 300;
         timeout.tv_usec = 0;
 	FD_ZERO(&rdfd);
 	FD_SET(fd,&rdfd);

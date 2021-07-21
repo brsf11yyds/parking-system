@@ -32,7 +32,7 @@ struct list_node
 	int id;   
 	unsigned money;
     int state;                     //0里       1外
-    int cat;                       //0普通卡    1临时卡
+    int cat;                       //1普通卡    2临时卡
     time_t intial_time;
     char picture[10];
 	struct list_node *next;	
@@ -130,6 +130,7 @@ int audioplay(unsigned char *p);/*语言播报*/
 
 /*card.c*/
 int card(int select);/*读卡系统*/
+int read_card(int* id);
 int write_card(int id);
 
 /*time.c*/
@@ -141,4 +142,15 @@ int do_beep();
 
 //data.c
 int data();
+
+int find_list_node(struct list_node * head , int id);
+int  money_list_node(struct list_node * head ,int id ,unsigned money);
+int  id_list_node(struct list_node * head ,int id ,int new_id);
+int  state_list_node(struct list_node * head ,int id ,int state);
+int  cat_list_node(struct list_node * head ,int id ,int cat);
+int  time_list_node(struct list_node * head ,int id ,time_t time);
+int  pic_list_node(struct list_node * head ,int id ,char *picture);
+int  state_list_node_2(struct list_node * head ,int id ,int *state);
+int  time_list_node_2(struct list_node * head ,int id ,time_t *time);
+int  money_list_node_2(struct list_node * head ,int id ,int *money);
 #endif

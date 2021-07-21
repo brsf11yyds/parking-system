@@ -23,8 +23,8 @@ int show_time()
     struct tm *p;
     time(&timep);
     p = gmtime(&timep);
-    //printf("%d/%d/%d\n", (1900+p->tm_year), (1+p->tm_mon), p->tm_mday);
-    //printf("%s\n%d:%d:%d\n", wday[p->tm_wday], p->tm_hour, p->tm_min, p->tm_sec);
+    // printf("%d/%d/%d\n", (1900+p->tm_year), (1+p->tm_mon), p->tm_mday);
+    // printf("%s\n%d:%d:%d\n", wday[p->tm_wday], p->tm_hour, p->tm_min, p->tm_sec);
 
     char str1[10];
     sprintf(str1,"%dÄê",1900+p->tm_year);
