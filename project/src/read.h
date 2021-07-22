@@ -15,16 +15,20 @@
 #include <netdb.h>
 #include <errno.h>
 #include <time.h>
+#include "api_v4l2.h"
+#include "lcd.h"
 
 #define DEV_PATH   "/dev/ttySAC2"
 #define KEYA		0x60
 #define KEYB		0x61
 
+#define CAR_IN  0
+#define CAR_OUT 1
+
 unsigned char cardid[4];        //存放RFID卡ID
 unsigned char DataWriteBuf[16];
 unsigned char DataReadBuf[16];
 unsigned char DataBfr[16];
-
 
 
 struct list_node
@@ -34,7 +38,7 @@ struct list_node
     int state;                     //0里       1外
     int cat;                       //1普通卡    2临时卡
     time_t intial_time;
-    char picture[10];
+    char in_picture[20],out_picture[20];
 	struct list_node *next;	
 };
 struct list_node * data0;
@@ -50,18 +54,18 @@ BMP格式
 每个字节的存贮范围都是0-255。那么以此类推，32位图即每像素存储r，g，b，a（Alpha通道，存储透明度）四种数据。8位图就是只有灰度这一种信息，
 还有二值图，它只有两种颜色，黑或者白。
 */
-// 文件信息头结构体
-typedef struct tagBITMAPFILEHEADER 
+//文件信息头结构体
+typedef struct tagBITMAPFILEHEADER1 
 {
     //unsigned short bfType;        // 19778，必须是BM字符串，对应的十六进制为0x4d42,十进制为19778，否则不是bmp格式文件
     unsigned int   bfSize;        // 文件大小 以字节为单位(2-5字节)
     unsigned short bfReserved1;   // 保留，必须设置为0 (6-7字节)
     unsigned short bfReserved2;   // 保留，必须设置为0 (8-9字节)
     unsigned int   bfOffBits;     // 从文件头到像素数据的偏移  (10-13字节)
-} BITMAPFILEHEADER;
+} BITMAPFILEHEADER1;
 
 //图像信息头结构体
-typedef struct tagBITMAPINFOHEADER 
+typedef struct tagBITMAPINFOHEADER1 
 {
     unsigned int    biSize;          // 此结构体的大小 (14-17字节)
     long            biWidth;         // 图像的宽  (18-21字节)
@@ -74,7 +78,7 @@ typedef struct tagBITMAPINFOHEADER
     long            biYPelsPerMeter; // 说明垂直分辨率，用象素/米表示。一般为0 (42-45字节)
     unsigned int    biClrUsed;       // 说明位图实际使用的彩色表中的颜色索引数（设为0的话，则说明使用所有调色板项）。 (46-49字节)
     unsigned int    biClrImportant;  // 说明对图象显示有重要影响的颜色索引的数目，如果是0，表示都重要。(50-53字节)
-} BITMAPINFOHEADER;
+} BITMAPINFOHEADER1;
 
 //24位图像素信息结构体,即调色板
 typedef struct _PixelInfo {
@@ -103,9 +107,9 @@ int   Display_characterX(unsigned int x,          //x坐标起始点
 
 
 
-void showBmpHead(BITMAPFILEHEADER pBmpHead);
+void showBmpHead(BITMAPFILEHEADER1 pBmpHead);
 
-void showBmpInfoHead(BITMAPINFOHEADER pBmpinfoHead);
+void showBmpInfoHead(BITMAPINFOHEADER1 pBmpinfoHead);
 
 /*bmp_show.c*/
 int show_bmp(char *path);/*显示图片*/
@@ -135,7 +139,7 @@ int write_card(int id);
 
 /*time.c*/
 int show_time();
-int show_pay();
+int show_pay(int cast);
 
 /*beep_app.c*/
 int do_beep();
@@ -149,8 +153,14 @@ int  id_list_node(struct list_node * head ,int id ,int new_id);
 int  state_list_node(struct list_node * head ,int id ,int state);
 int  cat_list_node(struct list_node * head ,int id ,int cat);
 int  time_list_node(struct list_node * head ,int id ,time_t time);
-int  pic_list_node(struct list_node * head ,int id ,char *picture);
+int  pic_list_node(struct list_node * head ,int id ,char *picture,int inout);
 int  state_list_node_2(struct list_node * head ,int id ,int *state);
 int  time_list_node_2(struct list_node * head ,int id ,time_t *time);
 int  money_list_node_2(struct list_node * head ,int id ,int *money);
+int  cat_list_node_2(struct list_node * head ,int id ,int *cat);
+int  list_add_head(struct list_node * head ,int id,unsigned money,int cat);
+int  delete_list_node(struct list_node * head , int id);
+
+int camera(char* filename);
+int syasinn(int id,int inout);
 #endif

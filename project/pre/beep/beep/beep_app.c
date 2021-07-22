@@ -15,21 +15,21 @@ int do_beep()
 	}
 	
 	int i;
-	for(i=0;i<1;i++)
+	for(i=0;i<5;i++)
 	{
 		ioctl(b_fd,0,1); //on
 		usleep(500000);//0.5S
 		ioctl(b_fd,1,1); //off
 		usleep(500000);//0.5S
-
 	}
+	
 	close(b_fd);
 	
 	return 0;
 }
 
-// int main()
-// {
-// 	do_beep();
-// 	return 0;
-// }
+int main()
+{
+	do_beep();
+	return 0;
+}

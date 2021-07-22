@@ -17,7 +17,7 @@ int show_time()
     while(1)
     {
     Init_Font();
-    Clean_Area(0,0,800,200,0x0000ff00);
+    Clean_Area(0,0,800,50,0x00ffffff);
     char *wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     time_t timep;
     struct tm *p;
@@ -31,7 +31,7 @@ int show_time()
     char str2[10];
     sprintf(str2,"%d月",1+p->tm_mon);
     char str3[10];
-    sprintf(str3,"%d日 ",p->tm_mday);
+    sprintf(str3,"%d日",p->tm_mday);
     char str4[10];
     sprintf(str4," %d时",p->tm_hour);
     char str5[10];
@@ -57,11 +57,11 @@ int show_time()
     // sec1=time1 - hour1*3600 - min1*60;
     
     // char str7[20];
-    // sprintf(str7,"已停车%d小时",hour1);
+    // sprintf(str7,"锟斤拷锟斤拷停锟斤拷%d小时",hour1);
     // char str8[20];
-    // sprintf(str8,"%d分",min1);
+    // sprintf(str8,"%d锟斤拷",min1);
     // char str9[20];
-    // sprintf(str9,"%d秒",sec1);
+    // sprintf(str9,"%d锟斤拷",sec1);
 
     // char *temp2;
     // temp2 = (char *)malloc(sizeof(char)*50);
@@ -69,14 +69,14 @@ int show_time()
     // strcat(temp2,str8);
     // strcat(temp2,str9);
 
-    // int pay;//按分钟计时
+    // int pay;//锟斤拷锟姐花锟斤拷
     // int sec_cnt;
     // if(sec1<30){sec_cnt=0;}
     // else {sec_cnt=1;}
     // pay=hour1*60+min1+sec_cnt;
 
     // char str10[20];
-    // sprintf(str10,"按分钟计费=%d",pay);
+    // sprintf(str10,"停锟斤拷锟斤拷锟?=%d",pay);
 
     Display_characterX(0,0,temp,0x00ff0000,2);
     // Display_characterX(0,50,temp2,0x00ff0000,2);
@@ -91,7 +91,22 @@ int show_time()
     return 0;
 }
 
-int show_pay()
+int show_pay(int cast)
 {
+    Init_Font();
+    Clean_Area(0,50,800,50,0x00ffffff);
+    char str1[100];
+    char str2[50];
+    
+    do_beep();
+    sprintf(str1,"本次停车一共消费%d",cast);
+    sprintf(str2,"%d",cast);
+    // system("madplay bencitingche.mp3");
+    // system("madplay yigongjiaofei.mp3");
+    // audioplay(str2);
+    // system("madplay yuan.mp3");
 
+    Display_characterX(0,50,str1,0x000000ff,2);
+    UnInit_Font();
+    return 0;
 }
